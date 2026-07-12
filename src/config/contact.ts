@@ -1,6 +1,5 @@
-// Pendiente confirmar número real de WhatsApp — ver plan.md §14.
-// Mientras esté vacío, WhatsAppButton se muestra deshabilitado en vez de enlazar a un número inventado.
 export const CONTACT = {
-  whatsappNumber: "",
+  // +57 316 528 8944 — formato wa.me: solo dígitos, con código de país, sin "+" ni espacios.
+  whatsappNumber: "573165288944",
   email: "info@industriasrga.com",
 };
