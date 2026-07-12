@@ -1,0 +1,27 @@
+---
+import { MessageCircle } from "@lucide/astro";
+import { CONTACT } from "../config/contact";
+import { useTranslations, type Lang } from "../i18n/ui";
+
+interface Props {
+  lang: Lang;
+  class?: string;
+}
+
+const { lang, class: className = "" } = Astro.props;
+const t = useTranslations(lang);
+const hasNumber = CONTACT.whatsappNumber.length > 0;
+const href = hasNumber ? `https://wa.me/${CONTACT.whatsappNumber}` : "#";
+---
+
+<a
+  href={href}
+  target={hasNumber ? "_blank" : undefined}
+  rel={hasNumber ? "noopener noreferrer" : undefined}
+  aria-disabled={hasNumber ? undefined : "true"}
+  title={hasNumber ? undefined : "Número de WhatsApp pendiente de confirmar"}
+  class={`inline-flex items-center gap-2 rounded-[--radius-card] bg-rga-navy px-5 py-3 font-body text-sm font-medium text-white transition-colors hover:bg-rga-navy-hover ${hasNumber ? "" : "pointer-events-none opacity-50"} ${className}`}
+>
+  <MessageCircle size={18} />
+  {t("cta.whatsapp")}
+</a>

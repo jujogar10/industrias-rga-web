@@ -1,0 +1,35 @@
+---
+import { Image } from "astro:assets";
+import logo from "../assets/marca/logo-rga-trimmed.png";
+import { useTranslations, routes, type Lang } from "../i18n/ui";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const r = routes[lang];
+const otherLang = lang === "es" ? "en" : "es";
+---
+
+<header class="sticky top-0 z-50 border-b border-rga-border bg-white/95 backdrop-blur">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+    <a href={r.home} class="flex items-center">
+      <Image src={logo} alt="RGA" height={32} width={82} />
+    </a>
+
+    <nav class="flex items-center gap-5 font-body text-sm text-rga-text sm:gap-8">
+      <a href={r.home} class="hover:text-rga-navy">{t("nav.home")}</a>
+      <a href={r.products} class="hover:text-rga-navy">{t("nav.products")}</a>
+      <a href={r.contact} class="hover:text-rga-navy">{t("nav.contact")}</a>
+    </nav>
+
+    <a
+      href={routes[otherLang].home}
+      class="font-body text-sm font-medium text-rga-acero-dark hover:text-rga-navy"
+    >
+      {otherLang.toUpperCase()}
+    </a>
+  </div>
+</header>

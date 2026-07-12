@@ -1,0 +1,57 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+import { useTranslations, routes, type Lang } from "../i18n/ui";
+
+interface Props {
+  lang: Lang;
+  // Ninguno de los dos existe todavía — ver plan.md §14. Sin video ni poster,
+  // el hero cae a un fondo navy sólido (on-brand, no se ve "roto").
+  videoSrc?: string;
+  posterSrc?: ImageMetadata;
+}
+
+const { lang, videoSrc, posterSrc } = Astro.props;
+const t = useTranslations(lang);
+const r = routes[lang];
+---
+
+<section class="relative flex min-h-[80vh] items-center overflow-hidden bg-rga-navy text-white">
+  {
+    videoSrc && (
+      <video
+        class="absolute inset-0 h-full w-full object-cover"
+        autoplay
+        loop
+        muted
+        playsinline
+        poster={posterSrc?.src}
+      >
+        <source src={videoSrc} type="video/mp4" />
+      </video>
+    )
+  }
+  {
+    !videoSrc && posterSrc && (
+      <Image
+        src={posterSrc}
+        alt=""
+        class="absolute inset-0 h-full w-full object-cover"
+      />
+    )
+  }
+  <div class="absolute inset-0 bg-rga-navy/70"></div>
+
+  <div class="relative mx-auto max-w-3xl px-6 py-24 text-center">
+    <h1 class="font-heading text-4xl font-semibold leading-tight md:text-5xl">
+      {t("hero.title")}
+    </h1>
+    <p class="mt-6 font-body text-lg text-white/85">{t("hero.subtitle")}</p>
+    <a
+      href={r.products}
+      class="mt-10 inline-block rounded-[--radius-card] bg-white px-6 py-3 font-body text-sm font-medium text-rga-navy hover:bg-white/90"
+    >
+      {t("hero.cta")}
+    </a>
+  </div>
+</section>

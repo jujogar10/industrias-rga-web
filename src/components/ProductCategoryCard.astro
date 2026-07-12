@@ -1,0 +1,63 @@
+---
+import { Image } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import ruedaBf from "../assets/productos/rueda-bf.png";
+import soporteGiratorio from "../assets/productos/soporte-giratorio.png";
+import { routes, type Lang } from "../i18n/ui";
+
+interface Props {
+  lang: Lang;
+  categoria: CollectionEntry<"categorias">;
+}
+
+const { lang, categoria } = Astro.props;
+const r = routes[lang];
+
+// Mapeo manual mientras el catálogo tenga solo 3 categorías sin productos individuales.
+// "rodachinas" todavía no tiene foto propia — ver plan.md §14 (sí tiene video).
+const posterMap = {
+  ruedas: ruedaBf,
+  soportes: soporteGiratorio,
+} as const;
+
+const poster = posterMap[categoria.data.slug as keyof typeof posterMap];
+const video = categoria.data.video;
+const nombre = categoria.data.nombre[lang];
+const descripcion = categoria.data.descripcion[lang];
+---
+
+<a
+  href={`${r.products}#${categoria.data.slug}`}
+  class="group block overflow-hidden rounded-[--radius-card] border border-rga-border bg-rga-bg-alt transition-shadow hover:shadow-lg"
+>
+  <div class="relative aspect-4/3 w-full overflow-hidden bg-rga-navy">
+    {
+      video ? (
+        <video
+          class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+          autoplay
+          loop
+          muted
+          playsinline
+          poster={poster?.src}
+        >
+          <source src={video} type="video/mp4" />
+        </video>
+      ) : poster ? (
+        <Image
+          src={poster}
+          alt={nombre}
+          class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      ) : (
+        <div class="flex h-full w-full items-center justify-center font-heading text-sm text-white/40">
+          {nombre}
+        </div>
+      )
+    }
+  </div>
+  <div class="p-6">
+    <h3 class="font-heading text-xl font-medium text-rga-text">{nombre}</h3>
+    <p class="mt-2 font-body text-sm text-rga-text-secondary">{descripcion}</p>
+  </div>
+</a>

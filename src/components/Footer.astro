@@ -1,0 +1,38 @@
+---
+import { Mail } from "@lucide/astro";
+import { CONTACT } from "../config/contact";
+import { useTranslations, type Lang } from "../i18n/ui";
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="bg-rga-navy text-white">
+  <div class="mx-auto max-w-6xl px-6 py-12">
+    <div class="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
+      <div>
+        <p class="font-heading text-lg font-semibold">RGA</p>
+        <p class="mt-2 max-w-xs font-body text-sm text-white/70">
+          {t("hero.subtitle")}
+        </p>
+      </div>
+
+      <a
+        href={`mailto:${CONTACT.email}`}
+        class="inline-flex items-center gap-2 font-body text-sm text-white/90 hover:text-white"
+      >
+        <Mail size={16} />
+        {CONTACT.email}
+      </a>
+    </div>
+
+    <p class="mt-10 border-t border-white/10 pt-6 font-body text-xs text-white/50">
+      © {year} Industrias RGA. {t("footer.rights")}
+    </p>
+  </div>
+</footer>

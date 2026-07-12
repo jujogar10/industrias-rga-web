@@ -1,0 +1,33 @@
+---
+import { Mail } from "@lucide/astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import WhatsAppButton from "../../components/WhatsAppButton.astro";
+import { CONTACT } from "../../config/contact";
+import { useTranslations } from "../../i18n/ui";
+
+const lang = "es" as const;
+const t = useTranslations(lang);
+---
+
+<BaseLayout
+  lang={lang}
+  title="Contacto — RGA"
+  description="Escríbenos por WhatsApp o correo — te ayudamos a encontrar la rueda o soporte correcto para tu operación."
+>
+  <section class="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center px-6 py-24 text-center">
+    <h1 class="font-heading text-4xl font-semibold text-rga-text">
+      {t("nav.contact")}
+    </h1>
+    <p class="mt-4 font-body text-rga-text-secondary">{t("hero.subtitle")}</p>
+    <div class="mt-10 flex flex-wrap justify-center gap-4">
+      <WhatsAppButton lang={lang} />
+      <a
+        href={`mailto:${CONTACT.email}`}
+        class="inline-flex items-center gap-2 rounded-[--radius-card] border border-rga-border px-5 py-3 font-body text-sm font-medium text-rga-navy hover:bg-rga-bg-alt"
+      >
+        <Mail size={18} />
+        {CONTACT.email}
+      </a>
+    </div>
+  </section>
+</BaseLayout>

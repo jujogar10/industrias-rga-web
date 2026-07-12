@@ -1,0 +1,47 @@
+@import "tailwindcss";
+@import "@fontsource-variable/space-grotesk";
+@import "@fontsource-variable/inter";
+@import "@fontsource/roboto-mono/400.css";
+@import "@fontsource/roboto-mono/500.css";
+
+/*
+ * Tokens de marca RGA — fuente de verdad: Marca/Guia-Marca-RGA.md
+ * Tailwind v4 es CSS-first: no hay tailwind.config.mjs, este @theme
+ * genera las utilities (bg-rga-navy, text-rga-acero, font-heading, etc.)
+ */
+@theme {
+  /* Color primario */
+  --color-rga-navy: #033773;
+  --color-rga-navy-hover: #022a5a;
+
+  /* Acento (acero) */
+  --color-rga-acero: #5c6b78;
+  --color-rga-acero-light: #8e9aa6;
+  --color-rga-acero-dark: #3e4a54;
+
+  /* Neutros */
+  --color-rga-bg-alt: #f4f5f6;
+  --color-rga-border: #d9dce2;
+  --color-rga-text: #22262a;
+  --color-rga-text-secondary: #6b7278;
+
+  /* Tipografía */
+  --font-heading: "Space Grotesk Variable", "Space Grotesk", sans-serif;
+  --font-body: "Inter Variable", "Inter", sans-serif;
+  --font-mono-tech: "Roboto Mono", monospace;
+
+  /* Radios — cards/botones ligeramente redondeados, no 100% rectos */
+  --radius-card: 8px;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-rga-text);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+}
