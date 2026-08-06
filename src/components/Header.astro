@@ -1,6 +1,7 @@
 ---
-import { Image } from "astro:assets";
+import { Image, getImage } from "astro:assets";
 import logo from "../assets/marca/logo-rga-trimmed.png";
+import motionWave from "../assets/marca/motion-wave.png";
 import { useTranslations, routes, type Lang } from "../i18n/ui";
 
 interface Props {
@@ -11,15 +12,23 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 const r = routes[lang];
 const otherLang = lang === "es" ? "en" : "es";
+
+// Banda "Motion Wave" del sistema de fichas técnicas, reutilizada en el
+// header — ver Marca/Guia-Marca-RGA.md y Marca/Hero RGA.png. Solo se pinta
+// desde sm: para arriba (ver <style>), así el header en mobile queda plano.
+const wave = await getImage({ src: motionWave, width: 1100, format: "webp" });
 ---
 
-<header class="sticky top-0 z-50 border-b border-rga-border bg-white/95 backdrop-blur">
+<header
+  class="header-wave sticky top-0 z-50 border-b border-rga-border bg-white"
+  style={`--wave-url: url(${wave.src})`}
+>
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
     <a href={r.home} class="flex items-center">
       <Image src={logo} alt="RGA" height={32} width={82} />
     </a>
 
-    <nav class="flex items-center gap-5 font-body text-sm text-rga-text sm:gap-8">
+    <nav class="flex items-center gap-4 font-body text-sm text-rga-text sm:gap-5">
       <a href={r.home} class="hover:text-rga-navy">{t("nav.home")}</a>
       <a href={r.products} class="hover:text-rga-navy">{t("nav.products")}</a>
       <a href={r.contact} class="hover:text-rga-navy">{t("nav.contact")}</a>
@@ -27,9 +36,40 @@ const otherLang = lang === "es" ? "en" : "es";
 
     <a
       href={routes[otherLang].home}
-      class="font-body text-sm font-medium text-rga-acero-dark hover:text-rga-navy"
+      class="font-body text-sm font-medium text-rga-text sm:text-white sm:hover:text-white/75"
     >
       {otherLang.toUpperCase()}
     </a>
   </div>
 </header>
+
+<style>
+  /* Motion Wave entra por la derecha del header, detrás del selector de
+     idioma, con un degradado blanco a la izquierda para que logo y nav
+     sigan legibles — mismo gesto que la banda de las fichas técnicas. */
+  @media (min-width: 640px) {
+    .header-wave {
+      background-image:
+        linear-gradient(to right, #fff 0%, #fff 42%, rgba(255, 255, 255, 0) 78%),
+        var(--wave-url);
+      background-repeat: no-repeat, no-repeat;
+      background-position:
+        left top,
+        right -85px center;
+      background-size:
+        100% 100%,
+        540px auto;
+    }
+
+    /* Colchón de contraste: si "Contacto" queda al borde del wave en
+       ventanas angostas, el halo blanco lo mantiene legible sin recolorear
+       todo el nav (solo el selector de idioma, que sí queda sobre navy,
+       pasa a blanco arriba). */
+    .header-wave nav a {
+      text-shadow:
+        0 0 5px #fff,
+        0 0 5px #fff,
+        0 0 9px #fff;
+    }
+  }
+</style>
