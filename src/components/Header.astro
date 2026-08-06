@@ -23,27 +23,35 @@ const wave = await getImage({ src: motionWave, width: 1100, format: "webp" });
   class="header-wave sticky top-0 z-50 border-b border-rga-border bg-white"
   style={`--wave-url: url(${wave.src})`}
 >
-  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4 pr-16 sm:pr-20">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
     <a href={r.home} class="flex items-center">
       <Image src={logo} alt="RGA" height={32} width={82} />
     </a>
 
-    <nav class="flex items-center gap-4 font-body text-sm text-rga-text sm:gap-5">
+    <!-- Mobile (sin wave, ver <style>): en flujo, entre logo y switch,
+         como un header normal. Desde sm: se saca del flujo y se centra
+         sobre el header completo, no sobre esta columna, para que quede
+         a la mitad de la pantalla sin importar cuánto pese el logo a la
+         izquierda o "EN" a la derecha. -->
+    <nav
+      class="flex items-center gap-4 font-body text-sm text-rga-text sm:absolute sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:gap-5"
+    >
       <a href={r.home} class="hover:text-rga-navy">{t("nav.home")}</a>
       <a href={r.products} class="hover:text-rga-navy">{t("nav.products")}</a>
       <a href={r.contact} class="hover:text-rga-navy">{t("nav.contact")}</a>
     </nav>
-  </div>
 
-  <!-- Anclado al borde real del header (no al contenedor centrado), para
-       que viva siempre sobre el wave sin importar cuánto margen deje
-       max-w-6xl en pantallas muy anchas. -->
-  <a
-    href={routes[otherLang].home}
-    class="absolute right-6 top-1/2 -translate-y-1/2 font-body text-sm font-medium text-rga-text sm:text-white sm:hover:text-white/75"
-  >
-    {otherLang.toUpperCase()}
-  </a>
+    <!-- Mismo trato: en flujo en mobile, anclado al borde real del header
+         (no a esta columna) desde sm:, para que viva siempre sobre el
+         wave sin importar cuánto margen deje max-w-6xl en pantallas
+         muy anchas. -->
+    <a
+      href={routes[otherLang].home}
+      class="font-body text-sm font-medium text-rga-text sm:absolute sm:right-6 sm:top-1/2 sm:-translate-y-1/2 sm:text-white sm:hover:text-white/75"
+    >
+      {otherLang.toUpperCase()}
+    </a>
+  </div>
 </header>
 
 <style>
