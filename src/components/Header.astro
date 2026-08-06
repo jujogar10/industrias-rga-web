@@ -19,11 +19,11 @@ const otherLang = lang === "es" ? "en" : "es";
 const wave = await getImage({ src: motionWave, width: 1100, format: "webp" });
 ---
 
-<header class="sticky top-0 z-50 border-b border-rga-border bg-white">
-  <div
-    class="header-wave mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4"
-    style={`--wave-url: url(${wave.src})`}
-  >
+<header
+  class="header-wave sticky top-0 z-50 border-b border-rga-border bg-white"
+  style={`--wave-url: url(${wave.src})`}
+>
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4 pr-16 sm:pr-20">
     <a href={r.home} class="flex items-center">
       <Image src={logo} alt="RGA" height={32} width={82} />
     </a>
@@ -33,14 +33,17 @@ const wave = await getImage({ src: motionWave, width: 1100, format: "webp" });
       <a href={r.products} class="hover:text-rga-navy">{t("nav.products")}</a>
       <a href={r.contact} class="hover:text-rga-navy">{t("nav.contact")}</a>
     </nav>
-
-    <a
-      href={routes[otherLang].home}
-      class="font-body text-sm font-medium text-rga-text sm:text-white sm:hover:text-white/75"
-    >
-      {otherLang.toUpperCase()}
-    </a>
   </div>
+
+  <!-- Anclado al borde real del header (no al contenedor centrado), para
+       que viva siempre sobre el wave sin importar cuánto margen deje
+       max-w-6xl en pantallas muy anchas. -->
+  <a
+    href={routes[otherLang].home}
+    class="absolute right-6 top-1/2 -translate-y-1/2 font-body text-sm font-medium text-rga-text sm:text-white sm:hover:text-white/75"
+  >
+    {otherLang.toUpperCase()}
+  </a>
 </header>
 
 <style>
