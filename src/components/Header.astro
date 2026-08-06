@@ -20,7 +20,7 @@ const wave = await getImage({ src: motionWave, width: 1100, format: "webp" });
 ---
 
 <header
-  class="header-wave sticky top-0 z-50 border-b border-rga-border bg-white"
+  class="header-wave sticky top-0 z-50 border-rga-border bg-white sm:border-b"
   style={`--wave-url: url(${wave.src})`}
 >
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
@@ -51,6 +51,26 @@ const wave = await getImage({ src: motionWave, width: 1100, format: "webp" });
     >
       {otherLang.toUpperCase()}
     </a>
+  </div>
+
+  <!-- Mobile-only remate: el header no tiene ancho de sobra para la banda
+       fotográfica del wave (ver <style>, min-width 640px), así que aquí va
+       una versión lineal del mismo gesto — silueta + pinstripe en SVG,
+       liviana y siempre legible porque no vive detrás de texto. -->
+  <div class="h-6 w-full sm:hidden" aria-hidden="true">
+    <svg viewBox="0 0 400 24" preserveAspectRatio="none" class="block h-full w-full">
+      <path
+        d="M0 14 C110 2 260 22 400 10 L400 24 L0 24 Z"
+        fill="#033773"
+      ></path>
+      <path
+        d="M0 14 C110 2 260 22 400 10"
+        fill="none"
+        stroke="#ffffff"
+        stroke-width="1.5"
+        opacity="0.55"
+      ></path>
+    </svg>
   </div>
 </header>
 
