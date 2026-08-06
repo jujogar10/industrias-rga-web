@@ -19,11 +19,11 @@ const otherLang = lang === "es" ? "en" : "es";
 const wave = await getImage({ src: motionWave, width: 1100, format: "webp" });
 ---
 
-<header
-  class="header-wave sticky top-0 z-50 border-b border-rga-border bg-white"
-  style={`--wave-url: url(${wave.src})`}
->
-  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+<header class="sticky top-0 z-50 border-b border-rga-border bg-white">
+  <div
+    class="header-wave mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4"
+    style={`--wave-url: url(${wave.src})`}
+  >
     <a href={r.home} class="flex items-center">
       <Image src={logo} alt="RGA" height={32} width={82} />
     </a>
