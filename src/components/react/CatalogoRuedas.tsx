@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { TextosCatalogo } from "../../i18n/catalogo";
 
 /*
@@ -69,6 +69,7 @@ export default function CatalogoRuedas({
 }: Props) {
   const [estado, setEstado] = useState<Estado>(VACIO);
   const [abierta, setAbierta] = useState<string | null>(null);
+  const refResultados = useRef<HTMLDivElement>(null);
 
   // Al cargar, reconstruye el estado desde la URL para que un enlace
   // compartido por WhatsApp abra el catálogo ya filtrado.
@@ -153,6 +154,19 @@ export default function CatalogoRuedas({
    */
   const nombreDe = (lista: Opcion[], id: string) =>
     lista.find((o) => o.id === id)?.nombre ?? id;
+
+  /*
+   * En móvil el panel abierto ocupa toda la pantalla y tanto el contador como
+   * la cuadrícula quedan bajo el pliegue: se toca un chip y no pasa nada
+   * visible, así que el filtro parece roto. Por eso cada panel lleva su propio
+   * contador en vivo abajo, que además cierra el panel y baja a los resultados.
+   */
+  const cerrarYVer = () => {
+    setAbierta(null);
+    requestAnimationFrame(() =>
+      refResultados.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+    );
+  };
 
   const filtrosActivos = [
     ...(estado.peso > 0
@@ -265,6 +279,7 @@ export default function CatalogoRuedas({
             </div>
           )}
           <p className="mt-3 text-sm leading-relaxed text-rga-text-secondary">{nota}</p>
+          <PiePanel total={resultados.length} textos={textos} onVer={cerrarYVer} />
         </div>
       )}
 
@@ -274,7 +289,9 @@ export default function CatalogoRuedas({
           opciones={opcionesMaterial}
           activos={estado.materiales}
           onToggle={(id) => alternar("materiales", id)}
-        />
+        >
+          <PiePanel total={resultados.length} textos={textos} onVer={cerrarYVer} />
+        </Chips>
       )}
 
       {abierta === "linea" && (
@@ -283,10 +300,12 @@ export default function CatalogoRuedas({
           opciones={opcionesLinea}
           activos={estado.lineas}
           onToggle={(id) => alternar("lineas", id)}
-        />
+        >
+          <PiePanel total={resultados.length} textos={textos} onVer={cerrarYVer} />
+        </Chips>
       )}
 
-      <div className="mb-8 border-y border-rga-border py-3">
+      <div ref={refResultados} className="mb-8 scroll-mt-24 border-y border-rga-border py-3">
         <div className="flex items-center justify-between gap-4">
           <span className="font-body text-sm font-medium">
             {resultados.length}{" "}
@@ -391,16 +410,44 @@ function Puerta({
   );
 }
 
+function PiePanel({
+  total,
+  textos,
+  onVer,
+}: {
+  total: number;
+  textos: TextosCatalogo;
+  onVer: () => void;
+}) {
+  const etiqueta =
+    total === 0
+      ? textos.verCero
+      : total === 1
+        ? textos.verUna
+        : textos.verN.replace("{n}", String(total));
+  return (
+    <button
+      type="button"
+      onClick={onVer}
+      className="mt-5 w-full rounded-[--radius-card] bg-rga-navy px-5 py-3 font-body text-sm font-medium text-white transition hover:bg-rga-navy-hover"
+    >
+      {etiqueta}
+    </button>
+  );
+}
+
 function Chips({
   titulo,
   opciones,
   activos,
   onToggle,
+  children,
 }: {
   titulo: string;
   opciones: Array<Opcion & { total: number }>;
   activos: string[];
   onToggle: (id: string) => void;
+  children?: React.ReactNode;
 }) {
   return (
     <div className="mb-8 rounded-[--radius-card] bg-rga-bg-alt p-6">
@@ -428,6 +475,7 @@ function Chips({
           );
         })}
       </div>
+      {children}
     </div>
   );
 }
