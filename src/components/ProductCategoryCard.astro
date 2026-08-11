@@ -1,9 +1,10 @@
 ---
-import { Image } from "astro:assets";
+import { Image, getImage } from "astro:assets";
 import type { CollectionEntry } from "astro:content";
 import ruedaBf from "../assets/productos/rueda-bf.png";
 import soporteGiratorio from "../assets/productos/soporte-giratorio.png";
 import { routes, type Lang } from "../i18n/ui";
+import { CATALOGOS } from "../config/catalogos";
 
 interface Props {
   lang: Lang;
@@ -21,13 +22,26 @@ const posterMap = {
 } as const;
 
 const poster = posterMap[categoria.data.slug as keyof typeof posterMap];
+// El poster va como atributo del <video>, así que no pasa por <Image> y hay
+// que optimizarlo a mano: si no, se sirve el PNG máster de 2 MB para tapar
+// dos segundos de carga de video.
+const posterOptimizado = poster
+  ? (await getImage({ src: poster, width: 800, format: "webp" })).src
+  : undefined;
 const video = categoria.data.video;
 const nombre = categoria.data.nombre[lang];
 const descripcion = categoria.data.descripcion[lang];
+
+// Si la categoría ya tiene catálogo propio, la tarjeta entra directo a él;
+// si no, cae al ancla dentro de /productos como hasta ahora.
+const rutaCatalogo = CATALOGOS[categoria.data.slug];
+const href = rutaCatalogo
+  ? r[rutaCatalogo]
+  : `${r.products}#${categoria.data.slug}`;
 ---
 
 <a
-  href={`${r.products}#${categoria.data.slug}`}
+  href={href}
   class="group block overflow-hidden rounded-[--radius-card] border border-rga-border bg-rga-bg-alt transition-shadow hover:shadow-lg"
 >
   <div class="relative aspect-square w-full overflow-hidden bg-rga-navy">
@@ -39,7 +53,7 @@ const descripcion = categoria.data.descripcion[lang];
           loop
           muted
           playsinline
-          poster={poster?.src}
+          poster={posterOptimizado}
         >
           <source src={video} type="video/mp4" />
         </video>

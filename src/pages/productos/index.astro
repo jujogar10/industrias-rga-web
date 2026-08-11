@@ -1,13 +1,14 @@
 ---
 import { getCollection } from "astro:content";
-import { Image } from "astro:assets";
-import { Mail } from "@lucide/astro";
+import { Image, getImage } from "astro:assets";
+import { ArrowRight, Mail } from "@lucide/astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import WhatsAppButton from "../../components/WhatsAppButton.astro";
 import ruedaBf from "../../assets/productos/rueda-bf.png";
 import soporteGiratorio from "../../assets/productos/soporte-giratorio.png";
 import { CONTACT } from "../../config/contact";
-import { useTranslations } from "../../i18n/ui";
+import { CATALOGOS } from "../../config/catalogos";
+import { routes, useTranslations } from "../../i18n/ui";
 
 const lang = "es" as const;
 const t = useTranslations(lang);
@@ -19,6 +20,19 @@ const posterMap = {
   ruedas: ruedaBf,
   soportes: soporteGiratorio,
 } as const;
+
+// El poster va como atributo del <video>, así que no pasa por <Image> y hay
+// que optimizarlo a mano: si no, se sirve el PNG máster de 2 MB para tapar
+// dos segundos de carga de video. Se resuelve aquí y no dentro del map
+// porque ese callback no es async.
+const posterUrls = Object.fromEntries(
+  await Promise.all(
+    Object.entries(posterMap).map(async ([slug, img]) => [
+      slug,
+      (await getImage({ src: img, width: 900, format: "webp" })).src,
+    ]),
+  ),
+) as Record<string, string>;
 ---
 
 <BaseLayout
@@ -38,11 +52,15 @@ const posterMap = {
     <div class="mt-16 flex flex-col gap-20">
       {
         categorias.map((categoria, i) => {
-          const poster =
-            posterMap[categoria.data.slug as keyof typeof posterMap];
+          const poster = posterMap[categoria.data.slug as keyof typeof posterMap];
+          const posterUrl = posterUrls[categoria.data.slug];
           const video = categoria.data.video;
           const nombre = categoria.data.nombre[lang];
           const descripcion = categoria.data.descripcion[lang];
+          // Categorías con catálogo propio: la imagen se vuelve enlace.
+          const rutaCatalogo = CATALOGOS[categoria.data.slug];
+          const href = rutaCatalogo ? routes[lang][rutaCatalogo] : null;
+          const Media = href ? "a" : "div";
           return (
             <div
               id={categoria.data.slug}
@@ -51,7 +69,13 @@ const posterMap = {
                 i % 2 === 1 && "md:[&>*:first-child]:order-2",
               ]}
             >
-              <div class="aspect-square overflow-hidden rounded-[--radius-card] bg-rga-navy">
+              <Media
+                href={href}
+                class:list={[
+                  "group block aspect-square overflow-hidden rounded-[--radius-card] bg-rga-navy",
+                  href && "transition-shadow hover:shadow-lg",
+                ]}
+              >
                 {video ? (
                   <video
                     class="h-full w-full object-cover"
@@ -59,7 +83,7 @@ const posterMap = {
                     loop
                     muted
                     playsinline
-                    poster={poster?.src}
+                    poster={posterUrl}
                   >
                     <source src={video} type="video/mp4" />
                   </video>
@@ -74,7 +98,7 @@ const posterMap = {
                     {nombre}
                   </div>
                 )}
-              </div>
+              </Media>
               <div>
                 <h2 class="font-heading text-2xl font-medium text-rga-text">
                   {nombre}
@@ -83,6 +107,15 @@ const posterMap = {
                   {descripcion}
                 </p>
                 <div class="mt-6 flex flex-wrap gap-4">
+                  {href && (
+                    <a
+                      href={href}
+                      class="inline-flex items-center gap-2 rounded-[--radius-card] bg-rga-navy px-5 py-3 font-body text-sm font-medium text-white hover:bg-rga-navy-hover"
+                    >
+                      {t("category.viewCatalog")}
+                      <ArrowRight size={18} />
+                    </a>
+                  )}
                   <WhatsAppButton lang={lang} />
                   <a
                     href={`mailto:${CONTACT.email}`}

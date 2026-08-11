@@ -17,6 +17,9 @@ pnpm-debug.log*
 .env
 .env.production
 
+# respaldos locales del catálogo — el archivo activo sí se versiona
+src/data/*-respaldo-*.xlsx
+
 # macOS-specific files
 .DS_Store
 
