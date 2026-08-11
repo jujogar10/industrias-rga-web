@@ -70,6 +70,8 @@ export default function CatalogoRuedas({
   const [estado, setEstado] = useState<Estado>(VACIO);
   const [abierta, setAbierta] = useState<string | null>(null);
   const refResultados = useRef<HTMLDivElement>(null);
+  const refPanel = useRef<HTMLDivElement>(null);
+  const yaMontado = useRef(false);
 
   // Al cargar, reconstruye el estado desde la URL para que un enlace
   // compartido por WhatsApp abra el catálogo ya filtrado.
@@ -161,6 +163,25 @@ export default function CatalogoRuedas({
    * visible, así que el filtro parece roto. Por eso cada panel lleva su propio
    * contador en vivo abajo, que además cierra el panel y baja a los resultados.
    */
+  /*
+   * En celular los tres accesos ocupan casi toda la pantalla, así que el panel
+   * que se abre nace bajo el pliegue: se toca una puerta y aparentemente no
+   * pasa nada. Al abrir, se sube el panel al tope para que se vea completo,
+   * con sus chips y su contador.
+   *
+   * No aplica en el montaje inicial: un enlace filtrado compartido por
+   * WhatsApp abre con un panel activo y no debe saltar solo al cargar.
+   */
+  useEffect(() => {
+    if (!yaMontado.current) {
+      yaMontado.current = true;
+      return;
+    }
+    if (abierta) {
+      refPanel.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [abierta]);
+
   const cerrarYVer = () => {
     setAbierta(null);
     requestAnimationFrame(() =>
@@ -218,6 +239,9 @@ export default function CatalogoRuedas({
         />
       </div>
 
+      {/* scroll-mt-28 = 112px: la cabecera es sticky y mide 88px, sin ese
+          margen el panel queda por debajo de ella al subirlo. */}
+      <div ref={refPanel} className="scroll-mt-28">
       {abierta === "carga" && (
         <div className="mb-8 rounded-[--radius-card] bg-rga-bg-alt p-6">
           <p className="mb-3 text-sm text-rga-text-secondary">{textos.calcPaso1}</p>
@@ -304,8 +328,9 @@ export default function CatalogoRuedas({
           <PiePanel total={resultados.length} textos={textos} onVer={cerrarYVer} />
         </Chips>
       )}
+      </div>
 
-      <div ref={refResultados} className="mb-8 scroll-mt-24 border-y border-rga-border py-3">
+      <div ref={refResultados} className="mb-8 scroll-mt-28 border-y border-rga-border py-3">
         <div className="flex items-center justify-between gap-4">
           <span className="font-body text-sm font-medium">
             {resultados.length}{" "}
