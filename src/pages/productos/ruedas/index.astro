@@ -1,0 +1,43 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import CatalogoRuedas from "../../../components/react/CatalogoRuedas";
+import { vistaRuedas } from "../../../lib/vista";
+import { CATALOGO } from "../../../i18n/catalogo";
+import { RUEDAS } from "../../../config/busqueda/ruedas";
+import { CONTACT } from "../../../config/contact";
+import { useTranslations } from "../../../i18n/ui";
+
+const lang = "es" as const;
+const t = useTranslations(lang);
+const textos = CATALOGO[lang];
+const { ruedas, materiales, lineas } = await vistaRuedas(lang);
+---
+
+<BaseLayout
+  lang={lang}
+  path="wheels"
+  title="Ruedas industriales — RGA"
+  description="Catálogo de ruedas industriales RGA: filtra por capacidad de carga, material de banda o línea de producto. Poliuretano y caucho, de 3 a 12 pulgadas."
+>
+  <section class="mx-auto max-w-6xl px-6 py-20">
+    <h1 class="font-heading text-4xl font-semibold text-rga-text">{textos.titulo}</h1>
+    <p class="mt-3 max-w-2xl font-body text-rga-text-secondary">{textos.subtitulo}</p>
+
+    <div class="mt-12">
+      <CatalogoRuedas
+        client:load
+        ruedas={ruedas}
+        materiales={materiales}
+        lineas={lineas}
+        textos={textos}
+        configuraciones={RUEDAS.configuraciones}
+        divisores={RUEDAS.divisores}
+        pesoMaximo={RUEDAS.pesoMaximo}
+        pesoPaso={RUEDAS.pesoPaso}
+        whatsappUrl={`https://wa.me/${CONTACT.whatsappNumber}`}
+        ctaWhatsapp={t("cta.whatsapp")}
+        locale="es-CO"
+      />
+    </div>
+  </section>
+</BaseLayout>

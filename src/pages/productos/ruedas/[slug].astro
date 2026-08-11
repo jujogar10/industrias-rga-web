@@ -1,0 +1,33 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import FichaRueda from "../../../components/FichaRueda.astro";
+import { getCatalogo } from "../../../lib/catalogo";
+
+export async function getStaticPaths() {
+  const catalogo = await getCatalogo();
+  return catalogo.ruedas.map((rueda) => ({
+    params: { slug: rueda.slug.es },
+    props: { rueda, catalogo },
+  }));
+}
+
+const lang = "es" as const;
+const { rueda, catalogo } = Astro.props;
+
+const material =
+  catalogo.materiales.find((m) => m.id === rueda.banda)?.nombre[lang] ?? rueda.banda;
+const linea = catalogo.lineas.find((l) => l.id === rueda.linea)?.nombre[lang] ?? rueda.linea;
+
+// Sin la comilla de pulgada: en un <title> se ve como un carácter suelto y
+// Google la puede recortar raro.
+const diametro = rueda.diametro.texto.replace(/"$/, "");
+---
+
+<BaseLayout
+  lang={lang}
+  path="wheels"
+  title={`Rueda ${material} de ${diametro} pulgadas — ${rueda.referencia} — RGA`}
+  description={`Rueda industrial ${linea} en ${material}, diámetro ${diametro} pulgadas, capacidad ${rueda.capacidadKg} kg por rueda. Referencia ${rueda.referencia}.`}
+>
+  <FichaRueda lang={lang} rueda={rueda} catalogo={catalogo} />
+</BaseLayout>

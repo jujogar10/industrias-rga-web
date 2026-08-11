@@ -18,6 +18,16 @@ export function useTranslations(lang: Lang) {
 }
 
 export const routes = {
-  es: { home: "/", products: "/productos", contact: "/contacto" },
-  en: { home: "/en", products: "/en/products", contact: "/en/contact" },
+  es: {
+    home: "/",
+    products: "/productos",
+    wheels: "/productos/ruedas",
+    contact: "/contacto",
+  },
+  en: {
+    home: "/en",
+    products: "/en/products",
+    wheels: "/en/products/wheels",
+    contact: "/en/contact",
+  },
 } as const;
